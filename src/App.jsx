@@ -3,6 +3,7 @@ import AuthPage from './pages/AuthPage'
 import Dashboard from './pages/Dashboard'
 import JoinPage from './pages/JoinPage'
 import ProtectedRoute from './components/ProtectedRoute'
+import Layout from './components/Layout'
 
 function App() {
   return (
@@ -10,10 +11,12 @@ function App() {
       <Route path="/" element={<AuthPage />} />
       <Route path="/invite/:token" element={<JoinPage />} />
       <Route
-        path='/dashboard'
+        path="/dashboard/*"
         element={
           <ProtectedRoute>
-            <Dashboard />
+            <Layout>
+              <Dashboard />
+            </Layout>
           </ProtectedRoute>
         }
       />

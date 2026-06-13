@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
+import { Routes, Route } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import CreateGroup from '../components/CreateGroup'
 import GroupPanel from '../components/GroupPanel'
+import SongList from '../components/SongList'
 
 export default function Dashboard() {
   const [group, setGroup] = useState(undefined)
@@ -35,8 +37,10 @@ export default function Dashboard() {
   if (!group) return <CreateGroup onGroupCreated={setGroup} />
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <GroupPanel group={group} />
-    </div>
+    <Routes>
+      <Route path="/" element={<SongList group={group} />} />
+      <Route path="/pendientes" element={<div className="p-6 text-gray-500 text-sm">Próximamente — Canciones pendientes</div>} />
+      <Route path="/grupo" element={<GroupPanel group={group} />} />
+    </Routes>
   )
 }
