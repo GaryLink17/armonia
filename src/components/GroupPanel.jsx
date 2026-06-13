@@ -47,13 +47,13 @@ export default function GroupPanel({ group }) {
   }
 
   return (
-    <div className="max-w-md mx-auto px-4 py-8">
+    <div className="w-full px-4 py-8">
       <h2 className="text-lg font-semibold text-gray-900 mb-1">{group.groups.name}</h2>
       <p className="text-sm text-gray-500 mb-6">{members.length} miembro{members.length !== 1 ? 's' : ''}</p>
 
       <div className="flex flex-col gap-2 mb-8">
         {members.map((m, i) => (
-          <div key={m.user_id} className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-xl">
+          <div key={m.user_id} className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-xl overflow-hidden">
             <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 text-xs font-semibold flex-shrink-0">
               {i + 1}
             </div>
