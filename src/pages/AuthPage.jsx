@@ -20,8 +20,17 @@ export default function AuthPage() {
 
         if (isLogin) {
             const { error } = await supabase.auth.signInWithPassword({email, password})
-            if (error) setError(error.message)
-            else navigate('/dashboard')
+            if (error) {
+                setError(error.message)
+            } else {
+                const pendingToken = localStorage.getItem('pendingInviteToken')
+                if (pendingToken) {
+                    localStorage.removeItem('pendingInviteToken')
+                    navigate(`/invite/${pendingToken}`)
+                } else {
+                    navigate('/dashboard')
+                }
+            }
         } else {
             const { error } =await supabase.auth.signUp({ email, password })
             if (error) setError(error.message)
