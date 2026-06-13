@@ -47,7 +47,7 @@ export default function GroupPanel({ group }) {
   }
 
   return (
-    <div className="max-w mx-auto px-4 py-8">
+    <div className="max-w-md mx-auto px-4 py-8">
       <h2 className="text-lg font-semibold text-gray-900 mb-1">{group.groups.name}</h2>
       <p className="text-sm text-gray-500 mb-6">{members.length} miembro{members.length !== 1 ? 's' : ''}</p>
 
@@ -70,7 +70,7 @@ export default function GroupPanel({ group }) {
           <p className="text-sm font-medium text-gray-700 mb-3">Enlace de invitación</p>
           {inviteLink ? (
             <div className="flex flex-col gap-2">
-              <div className="bg-gray-50 rounded-lg px-3 py-2 text-xs text-gray-500 font-mono break-all">
+              <div className="bg-gray-50 rounded-lg px-3 py-2 text-sm text-gray-500 font-mono break-all">
                 {inviteLink}
               </div>
               <button
