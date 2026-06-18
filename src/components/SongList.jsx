@@ -1,31 +1,38 @@
 import { useEffect, useState } from "react"
 import { supabase } from "../supabaseClient"
-import { IconPlus, IconMusic, IconBrandYoutube, IconEdit, IconTrash } from '@tabler/icons-react'
-import { href } from "react-router-dom"
+import { IconPlus, IconMusic, IconBrandYoutube, IconEdit, IconTrash, IconSearch } from '@tabler/icons-react'
+import SongDetail from "./SongDetails"
 
 export default function SongList({ group }) {
     const [songs, setSongs] = useState([])
     const [loading, setLoading] = useState(true)
     const [showForm, setShowForm] = useState(false)
+    const [selectedSong, setSelectedSong] = useState(null)
+    const [search, setSearch] = useState('')
+    const filteredSongs = songs.filter(s => 
+        (s.title || '').toLowerCase().includes(search.toLowerCase()) ||
+        (s.artist || '').toLowerCase().includes(search.toLowerCase())
+    )
     const isAdmin = group.role === 'admin'
+
 
     useEffect(() => {
         fetchSongs()
     }, [group.group_id])
 
     async function fetchSongs() {
-        const {data, error} = await supabase
+        const { data, error } = await supabase
             .from('songs')
             .select('*')
             .eq('group_id', group.group_id)
-            .order('created_at', {ascending: false})
+            .order('created_at', { ascending: false })
 
         if (!error) setSongs(data)
         setLoading(false)
     }
 
     async function handleDelete(id) {
-        const {error} = await supabase.from('songs').delete().eq('id', id)
+        const { error } = await supabase.from('songs').delete().eq('id', id)
         if (!error) setSongs(songs.filter(s => s.id !== id))
     }
 
@@ -35,51 +42,75 @@ export default function SongList({ group }) {
         </div>
     )
 
+    if (selectedSong) return (
+        <SongDetail
+            song={selectedSong}
+            isAdmin={isAdmin}
+            onBack={() => setSelectedSong(null)}
+            onEdit={() => { setShowForm(selectedSong); setSelectedSong(null) }}
+        />
+    )
+
     return (
-        <div className="w-full max-w-2Xl mx-auto px-4 py-8">
+        <div className="w-full max-w-2xl mx-auto px-4 py-8">
             <div className="flex items-center justify-between mb-6">
                 <div>
                     <h2 className="text-lg font-semibold text-gray-900">Repertorio</h2>
-                    <p className="text-sm text-gray-500">{songs.length} cancion{songs.length !== 1 ? 'es' : ''}</p>
+                    <p className="text-sm text-gray-500">{filteredSongs.length} cancion{filteredSongs.length !== 1 ? 'es' : ''}</p>
                 </div>
                 {isAdmin && (
                     <button
                         onClick={() => setShowForm(true)}
                         className="flex items-center gap-2 bg-violet-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-violet-700"
                     >
-                        <IconPlus size={16}/>
+                        <IconPlus size={16} />
                         Agregar
                     </button>
                 )}
             </div>
 
-            {songs.length === 0 ? (
+            <div className="relative mb-6">
+                <IconSearch size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input type="text" 
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    placeholder="Busca por nombre o artista"
+                    className="w-full border border-gray-200 rounded-lg pl-9 pr-4 py-2 text-sm outline-none focus:border-violet-500"
+                />
+            </div>
+
+            {filteredSongs.length === 0 ? (
                 <div className="text-center py-16 text-gray-400">
                     <IconMusic size={40} className="mx-auto mb-3 opacity-30" />
                     <p className="text-sm">No hay canciones en el repertorio.</p>
                 </div>
             ) : (
                 <div className="flex flex-col gap-3">
-                    {songs.map(song => (
-                        <div key={song.id} className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center shrink-0">
+                    {filteredSongs.map(song => (
+                        <div
+                            key={song.id}
+                            onClick={() => setSelectedSong(song)}
+                            className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3 cursor-pointer hover:border-violet-200 hover:bg-violet-50 transition-colors"
+                        >
+                            <div className="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center flex-shrink-0">
                                 <IconMusic size={20} className="text-violet-600" />
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium text-gray-900 truncate">{song.title}</p>
                                 <p className="text-xs text-gray-500 truncate">{song.artist}</p>
                             </div>
-                            <div className=" sm:flex items-center gap-2 shrink-0">
+                            <div className="hidden sm:flex items-center gap-2 flex-shrink-0">
                                 <span className="text-xs bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full">
                                     {song.original_key} → {song.ministry_key}
                                 </span>
                             </div>
-                            <div className="flex items-center gap-1 shrink-0">
+                            <div className="flex items-center gap-1 flex-shrink-0">
                                 {song.youtube_url && (
                                     <a
                                         href={song.youtube_url}
                                         target="_blank"
                                         rel="noopener noreferrer"
+                                        onClick={(e) => e.stopPropagation()}
                                         className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-500"
                                     >
                                         <IconBrandYoutube size={18} />
@@ -88,13 +119,13 @@ export default function SongList({ group }) {
                                 {isAdmin && (
                                     <>
                                         <button
-                                            onClick={() => setShowForm(song)}
+                                            onClick={(e) => { e.stopPropagation(); setShowForm(song) }}
                                             className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-violet-600"
                                         >
                                             <IconEdit size={18} />
                                         </button>
                                         <button
-                                            onClick={() => handleDelete(song.id)}
+                                            onClick={(e) => { e.stopPropagation(); handleDelete(song.id) }}
                                             className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-500"
                                         >
                                             <IconTrash size={18} />
@@ -132,10 +163,10 @@ function SongForm({ group, song, onClose, onSaved }) {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
 
-    const keys = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B' ]
+    const keys = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 
     function handleChange(e) {
-        setForm({...form, [e.target.name]: e.target.value})
+        setForm({ ...form, [e.target.name]: e.target.value })
     }
 
     async function handleSubmit(e) {
@@ -144,17 +175,16 @@ function SongForm({ group, song, onClose, onSaved }) {
         setError(null)
 
         const { data: { user } } = await supabase.auth.getUser()
-
         const payload = { ...form, group_id: group.group_id, created_by: user.id }
 
         let error
         if (song) {
-            ({error} = await supabase.from('songs').update(payload).eq('id', song_id))
+            ({ error } = await supabase.from('songs').update(payload).eq('id', song.id))
         } else {
-            ({error} = await supabase.from('songs').insert(payload))
+            ({ error } = await supabase.from('songs').insert(payload))
         }
 
-        if (error){
+        if (error) {
             setError(error.message)
         } else {
             onSaved()
@@ -163,17 +193,18 @@ function SongForm({ group, song, onClose, onSaved }) {
 
         setLoading(false)
     }
+
     return (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
             <div className="bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto p-6">
                 <h3 className="text-base font-semibold text-gray-900 mb-4">
                     {song ? 'Editar cancion' : 'Agregar cancion'}
                 </h3>
-    
+
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <div>
                         <label className="text-sm text-gray-600 mb-1 block">Nombre de la cancion</label>
-                        <input 
+                        <input
                             name="title"
                             value={form.title}
                             onChange={handleChange}
@@ -182,7 +213,7 @@ function SongForm({ group, song, onClose, onSaved }) {
                             placeholder="Ej. Quien Podra?"
                         />
                     </div>
-    
+
                     <div>
                         <label className="text-sm text-gray-600 mb-1 block">Artista / Grupo</label>
                         <input
@@ -194,7 +225,7 @@ function SongForm({ group, song, onClose, onSaved }) {
                             placeholder="Ej: Averly Morillo"
                         />
                     </div>
-    
+
                     <div className="grid grid-cols-2 gap-3">
                         <div>
                             <label className="text-sm text-gray-600 mb-1 block">Tono Original</label>
@@ -211,63 +242,62 @@ function SongForm({ group, song, onClose, onSaved }) {
                         </div>
                         <div>
                             <label className="text-sm text-gray-600 mb-1 block">Tono de Ejecucion</label>
-                            <select 
+                            <select
                                 name="ministry_key"
                                 value={form.ministry_key}
                                 onChange={handleChange}
                                 required
                                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-violet-500 bg-white"
-
                             >
                                 <option value="">Seleccionar</option>
                                 {keys.map(k => <option key={k} value={k}>{k}</option>)}
                             </select>
                         </div>
-                        <div>
-                            <label className="text-sm text-gray-600 mb-1 block">Letra <span className="text-gray-400">(Opcional)</span></label>
-                            <textarea
-                                name="lyrics"
-                                value={form.lyrics}
-                                onChange={handleChange}
-                                rows={5}
-                                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-violet-500 resize-none"
-                                placeholder="Escribe o pega la letra aqui"
-                                
-                            />
-                        </div>
-                        <div>
-                            <label className="text-sm text-gray-600 mb-1 block">Link de Youtube <span className="text-gray-400">(Opcional)</span></label>
-                            <input
-                                name="youtube_url"
-                                value={form.youtube_url}
-                                onChange={handleChange}
-                                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-violet-500"
-                                placeholder="Link del Video..."
-                            />
-                        </div>
-    
-                        {error && <p className="text-sm text-red-500">{error}</p>}
+                    </div>
 
-                        <div className="flex gap-3 pt-2">
-                            <button
-                                type="button"
-                                onClick={onClose}
-                                className="flex-1 border border-gray-200 rounded-lg py-2 text-sm text-gray-600 hover:not-last:bg-gray-50"
-                            >
-                                Cancelar
-                            </button>
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="flex-1 bg-violet-600 text-sm text-white rounded-lg py-2 font-medium hover:bg-violet-700 disabled:opacity-50"
-                            >
-                                {loading ? 'Guardando...' : song ? 'Guardar' : 'Agregar'}
-                            </button>
-                        </div>
+                    <div>
+                        <label className="text-sm text-gray-600 mb-1 block">Letra <span className="text-gray-400">(Opcional)</span></label>
+                        <textarea
+                            name="lyrics"
+                            value={form.lyrics}
+                            onChange={handleChange}
+                            rows={5}
+                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-violet-500 resize-none"
+                            placeholder="Escribe o pega la letra aqui"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="text-sm text-gray-600 mb-1 block">Link de Youtube <span className="text-gray-400">(Opcional)</span></label>
+                        <input
+                            name="youtube_url"
+                            value={form.youtube_url}
+                            onChange={handleChange}
+                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-violet-500"
+                            placeholder="Link del Video..."
+                        />
+                    </div>
+
+                    {error && <p className="text-sm text-red-500">{error}</p>}
+
+                    <div className="flex gap-3 pt-2">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="flex-1 border border-gray-200 rounded-lg py-2 text-sm text-gray-600 hover:bg-gray-50"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="flex-1 bg-violet-600 text-sm text-white rounded-lg py-2 font-medium hover:bg-violet-700 disabled:opacity-50"
+                        >
+                            {loading ? 'Guardando...' : song ? 'Guardar' : 'Agregar'}
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     )
 }
-
