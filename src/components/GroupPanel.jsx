@@ -116,7 +116,7 @@ export default function GroupPanel({ group }) {
       </div>
 
       {isAdmin && (
-        <div className="border border-dashed border-gray-300 rounded-xl p-4">
+        <div className="border border-gray-300 rounded-xl p-4">
           <div className="flex items-center gap-2 mb-3">
             <IconLink size={16} className="text-violet-600" />
             <p className="text-sm font-medium text-gray-700">Enlace de invitacion</p>
