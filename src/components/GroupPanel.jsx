@@ -83,7 +83,11 @@ export default function GroupPanel({ group }) {
     setTimeout(() => setCopied(false), 2000)
   }
 
-
+  if (loading) return (
+    <div className="flex items-center justify-center py-20">
+      <p className="text-gray-400 text-sm">Cargando...</p>
+    </div>
+  )
 
   return (
     <div className="w-full max-w-2xl mx-auto px-4 py-8">
