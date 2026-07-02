@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from '../supabaseClient';
 import { IconPlus, IconMusic, IconCheck, IconX, IconBrandYoutube } from "@tabler/icons-react";
-import { href } from "react-router-dom";
 
 export default function PendingList({ group }) {
     const [pending, setPending] = useState([])
@@ -95,8 +94,8 @@ export default function PendingList({ group }) {
                             </div>
                             <div className="flex items-center gap-1 shrink-0">
                                 {song.youtube_url && (
-                                    <a 
-                                        href="song.youtube_url"
+                                    <a
+                                        href={song.youtube_url}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-500"

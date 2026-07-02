@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { supabase } from '../supabaseClient'
 
-export default function CreateGroup() {
+export default function CreateGroup({ onGroupCreated }) {
     const [name, setName] = useState('')
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)

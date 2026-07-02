@@ -1,4 +1,4 @@
-import { useEffect, useEffectEvent, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import {
   IconLink,
@@ -24,6 +24,7 @@ export default function GroupPanel({ group }) {
   const isAdmin = group.role === "admin";
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/immutability -- false positive: fetchMembers is a hoisted function declaration, same pattern as fetchSongs/fetchPending elsewhere
     fetchMembers();
   }, [group.group_id]);
 
@@ -71,7 +72,7 @@ export default function GroupPanel({ group }) {
       .eq('group_id', group.group_id)
       .eq('user_id', userId)
 
-    if (!error) setMembers(members.filter(() => m.user_id !== userId))
+    if (!error) setMembers(members.filter(m => m.user_id !== userId))
   }
 
   async function handleGenerateLink() {
@@ -133,7 +134,7 @@ export default function GroupPanel({ group }) {
               {m.role === "admin" ? "Admin" : "Miembro"}
             </span>
             {isAdmin && m.role !== "admin" && (
-              <button title="Eliminar miembro">
+              <button onClick={() => handleRemoveMember(m.user_id)} title="Eliminar miembro">
                 <IconTrash size={16} />
               </button>
             )}
