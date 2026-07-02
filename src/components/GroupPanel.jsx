@@ -11,7 +11,7 @@ import {
 function generateToken() {
   return (
     Math.random().toString(36).substring(2, 10) +
-    Math.random.toString(36).substring(2, 10)
+    Math.random().toString(36).substring(2, 10)
   );
 }
 
@@ -32,19 +32,19 @@ export default function GroupPanel({ group }) {
 
     const { data: memberData, error: memberError } = await supabase
       .from("group_members")
-      .select("user_id", "role")
+      .select("user_id, role")
       .eq("group_id", group.group_id);
 
     if (memberError || !memberData) {
       setLoading(false);
+      return;
     }
-    return;
 
     const userIds = memberData.map((m) => m.user_id);
     const { data: profileData, error: profileError } = await supabase
-      .from("user_profile")
+      .from("user_profiles")
       .select("id, email")
-      .eq("id", userIds);
+      .in("id", userIds);
 
     if (profileError) {
       setLoading(false);
@@ -59,6 +59,19 @@ export default function GroupPanel({ group }) {
 
     setMembers(enriched)
     setLoading(false)
+  }
+
+  async function handleRemoveMember(userId) {
+    const confirm = window.confirm("Seguro que deseas eliminar este miembro?")
+    if (!confirm) return
+
+    const { error } = await supabase
+      .from('group_members')
+      .delete()
+      .eq('group_id', group.group_id)
+      .eq('user_id', userId)
+
+    if (!error) setMembers(members.filter(() => m.user_id !== userId))
   }
 
   async function handleGenerateLink() {
@@ -100,16 +113,25 @@ export default function GroupPanel({ group }) {
         </p>
       </div>
 
-      <div>
+      <div className="flex flex-col gap-2 mb-8">
         {members.map((m) => (
-          <div key={m.user_id}>
-            <div>
-              <IconUserCircle size={20} />
+          <div 
+            key={m.user_id}
+            className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-xl"
+          >
+            <div className="w-9 h-9 rounded-full bg-violet-100 flex items-center justify-center">
+              <IconUserCircle size={20} className="text-violet-600" />
             </div>
-            <div>
-              <p>{m.email}</p>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-gray-800 truncate">{m.email}</p>
             </div>
-            <span>{m.role === "admin" ? "Admin" : "Miembro"}</span>
+            <span className={`text-sm px-2 py-0.5 rounded-full ${
+              m.role === 'admin'
+                ? 'bg-violet-100 text-violet-700'
+                : 'bg-green-100 text-green-700'
+            }`}>
+              {m.role === "admin" ? "Admin" : "Miembro"}
+            </span>
             {isAdmin && m.role !== "admin" && (
               <button title="Eliminar miembro">
                 <IconTrash size={16} />
