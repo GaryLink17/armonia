@@ -36,6 +36,9 @@ export default function GroupPanel({ group }) {
       .select("user_id, role")
       .eq("group_id", group.group_id);
 
+      console.log('memberData:', memberData)
+      console.log('memberError:', memberError)
+
     if (memberError || !memberData) {
       setLoading(false);
       return;
@@ -134,8 +137,12 @@ export default function GroupPanel({ group }) {
               {m.role === "admin" ? "Admin" : "Miembro"}
             </span>
             {isAdmin && m.role !== "admin" && (
-              <button onClick={() => handleRemoveMember(m.user_id)} title="Eliminar miembro">
-                <IconTrash size={16} />
+              <button 
+                onClick={() => handleRemoveMember(m.user_id)} 
+                className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500"
+                title="Eliminar miembro"
+              >
+                <IconTrash size={16}  />
               </button>
             )}
           </div>
