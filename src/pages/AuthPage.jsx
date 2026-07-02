@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 
@@ -11,6 +11,20 @@ export default function AuthPage() {
     const [message, setMessage] = useState(null)
 
     const navigate = useNavigate()
+
+    useEffect(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session) {
+                const pendingToken = localStorage.getItem('pendingInviteToken')
+                if (pendingToken) {
+                    localStorage.removeItem('pendingInviteToken')
+                    navigate(`/invite/${pendingToken}`)
+                } else {
+                    navigate('/dashboard')
+                }
+            }
+        })
+    }, [])
 
     async function handleSubmit(e) {
         e.preventDefault()
@@ -32,7 +46,16 @@ export default function AuthPage() {
                 }
             }
         } else {
-            const { error } =await supabase.auth.signUp({ email, password })
+            const pendingToken = localStorage.getItem('pendingInviteToken')
+            const redirectTo = pendingToken
+                ? `${window.location.origin}/invite/${pendingToken}`
+                : window.location.origin
+
+            const { error } = await supabase.auth.signUp({
+                email,
+                password,
+                options: { emailRedirectTo: redirectTo }
+            })
             if (error) setError(error.message)
                 else setMessage('Revisa tu correo para confirmar tu cuenta.')
         }
