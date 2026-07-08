@@ -20,6 +20,10 @@ export default function Dashboard() {
         .eq('user_id', user.id)
         .single()
 
+
+      console.log("Data: ", data)
+      console.log('Error: ', error)
+
       if (error || !data) setGroup(null)
       else setGroup(data)
 

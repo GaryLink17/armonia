@@ -172,8 +172,6 @@ function PendingForm({group, onClose, onSaved}) {
             onSaved()
             onClose()
         }
-
-        setLoading(false)
     }
 
     return (
