@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
+import LoadingSpinner from './LoadingSpinner'
+import ErrorMessage from './ErrorMessage' 
 import {
   IconLink,
   IconCopy,
@@ -21,6 +23,7 @@ export default function GroupPanel({ group }) {
   const [loadingLink, setLoadingLink] = useState(false);
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null)
   const isAdmin = group.role === "admin";
 
   useEffect(() => {
@@ -30,6 +33,7 @@ export default function GroupPanel({ group }) {
 
   async function fetchMembers() {
     setLoading(true);
+    setError(null)
 
     const { data: memberData, error: memberError } = await supabase
       .from("group_members")
@@ -40,7 +44,8 @@ export default function GroupPanel({ group }) {
       console.log('memberError:', memberError)
 
     if (memberError || !memberData) {
-      setLoading(false);
+      setError('No se puedieron cargar los miembros.')
+      setLoading(false)
       return;
     }
 
@@ -51,6 +56,7 @@ export default function GroupPanel({ group }) {
       .in("id", userIds);
 
     if (profileError) {
+      setError('No pudieron cargarse los perfiles de los miembros.')
       setLoading(false);
       return;
     }
@@ -100,11 +106,8 @@ export default function GroupPanel({ group }) {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  if (loading) return (
-    <div className="flex items-center justify-center py-20">
-      <p className="text-gray-400 text-sm">Cargando...</p>
-    </div>
-  )
+  if (loading) return <LoadingSpinner message="Cargando..." />
+  if (error) return <ErrorMessage message={error} />
 
   return (
     <div className="w-full max-w-2xl mx-auto px-4 py-8">

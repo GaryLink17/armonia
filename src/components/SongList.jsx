@@ -2,10 +2,13 @@ import { useEffect, useState } from "react"
 import { supabase } from "../supabaseClient"
 import { IconPlus, IconMusic, IconBrandYoutube, IconEdit, IconTrash, IconSearch } from '@tabler/icons-react'
 import SongDetail from "./SongDetails"
+import LoadingSpinner from "./LoadingSpinner"
+import ErrorMessage from "./ErrorMessage"
 
 export default function SongList({ group }) {
     const [songs, setSongs] = useState([])
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
     const [showForm, setShowForm] = useState(false)
     const [selectedSong, setSelectedSong] = useState(null)
     const [search, setSearch] = useState('')
@@ -21,13 +24,21 @@ export default function SongList({ group }) {
     }, [group.group_id])
 
     async function fetchSongs() {
+        setLoading(true)
+        setError(null)
+
         const { data, error } = await supabase
             .from('songs')
             .select('*')
             .eq('group_id', group.group_id)
             .order('created_at', { ascending: false })
 
-        if (!error) setSongs(data)
+        if (error) {
+            setError('No se puedieron cargar las canciones.')
+        } else {
+            setSongs(data)
+        }
+
         setLoading(false)
     }
 
@@ -36,11 +47,8 @@ export default function SongList({ group }) {
         if (!error) setSongs(songs.filter(s => s.id !== id))
     }
 
-    if (loading) return (
-        <div className="flex items-center justify-center py-20">
-            <p className="text-gray-400 text-sm">Cargando canciones...</p>
-        </div>
-    )
+    if (loading) return <LoadingSpinner message="Cargando Canciones..." />
+    if (error) return <ErrorMessage message={error} />
 
     if (selectedSong) return (
         <SongDetail

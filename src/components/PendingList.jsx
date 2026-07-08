@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import { supabase } from '../supabaseClient';
 import { IconPlus, IconMusic, IconCheck, IconX, IconBrandYoutube } from "@tabler/icons-react";
+import LoadingSpiner from './LoadingSpinner';
+import ErrorMessage from './ErrorMessage'
 
 export default function PendingList({ group }) {
     const [pending, setPending] = useState([])
     const [loading, setLoading] = useState(true)
     const [showForm, setShowForm] = useState(false)
+    const [error, setError] = useState(null)
     const isAdmin = group.role === 'admin'
 
     useEffect(() => {
@@ -13,14 +16,20 @@ export default function PendingList({ group }) {
     }, [group.group_id])
 
     async function fetchPending() {
+        setLoading(true)
+        setError(null)
+
         const { data, error } = await supabase
             .from('pending_songs')
             .select('*')
             .eq('group_id', group.group_id)
             .order('created_at', { ascending: false })
 
-        if (!error) setPending(data)
-            setLoading(false)
+        if (error) {
+            setError('No se pudieron cargar las canciones pendientes.')
+        } else {
+             setPending(data)
+        }
     }
 
     async function handleApprove(song) {
@@ -53,11 +62,8 @@ export default function PendingList({ group }) {
         if (!error) setPending(pending.filter(p => p.id !== id))
     }
 
-    if (loading) return (
-        <div className="flex items-center justify-center py-20">
-            <p className="text-gray-400 text-sm">Cargando...</p>
-        </div>
-    )
+    if (loading) return <LoadingSpiner message="Cargando..." />
+    if (error) return <ErrorMessage message={error} />
 
     return (
         <div className="w-full max-w-2xl mx-auto px-4 py-8">
