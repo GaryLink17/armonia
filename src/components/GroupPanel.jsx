@@ -40,9 +40,6 @@ export default function GroupPanel({ group }) {
       .select("user_id, role")
       .eq("group_id", group.group_id);
 
-      console.log('memberData:', memberData)
-      console.log('memberError:', memberError)
-
     if (memberError || !memberData) {
       setError('No se puedieron cargar los miembros.')
       setLoading(false)

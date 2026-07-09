@@ -30,6 +30,8 @@ export default function PendingList({ group }) {
         } else {
              setPending(data)
         }
+
+        setLoading(false)
     }
 
     async function handleApprove(song) {
@@ -172,6 +174,8 @@ function PendingForm({group, onClose, onSaved}) {
             onSaved()
             onClose()
         }
+
+        setLoading(false)
     }
 
     return (
