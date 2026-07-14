@@ -83,9 +83,9 @@ export default function AuthPage() {
         <div className='min-h-screen bg-gray-50 flex items-center justify-center px-4'>
             <div className='bg-white rounded-2xl shadow-sm border border-gray-200 p-8 w-full max-w-sm'>
                 {showInstallBanner && (
-                    <div>
+                    <div className='bg-violet-50 border border-violet-200 rounded-xl p-4 mb-4 flex items-center gap-3'>
                         <img src="/public/logo-192.png" alt="Armonia" className='w-10 h-10 rounded-xl'/>
-                        <div>
+                        <div className=''>
                             <p>Instalar Armonia</p>
                             <p>Agregala a tu pantalla de inicio</p>
                         </div>
