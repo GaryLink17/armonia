@@ -9,8 +9,18 @@ export default function AuthPage() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
     const [message, setMessage] = useState(null)
+    const [installPrompt, setInstallPrompt] = useState(null)
+    const [showInstallBanner, setShowInstallBanner] = useState(false)
 
     const navigate = useNavigate()
+
+    useEffect(() => {
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault()
+            setInstallPrompt(e)
+            setShowInstallBanner(true)
+        })
+    }, [])
 
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
@@ -25,6 +35,13 @@ export default function AuthPage() {
             }
         })
     }, [])
+
+    async function handleInstall() {
+        if (!installPrompt) return
+        await installPrompt.prompt()
+        const { outcome } = await installPrompt.userChoice
+        if (outcome === 'accepted') setShowInstallBanner(false)
+    }
 
     async function handleSubmit(e) {
         e.preventDefault()
@@ -65,6 +82,20 @@ export default function AuthPage() {
     return (
         <div className='min-h-screen bg-gray-50 flex items-center justify-center px-4'>
             <div className='bg-white rounded-2xl shadow-sm border border-gray-200 p-8 w-full max-w-sm'>
+                {showInstallBanner && (
+                    <div>
+                        <img src="/public/logo-192.png" alt="Armonia" className='w-10 h-10 rounded-xl'/>
+                        <div>
+                            <p>Instalar Armonia</p>
+                            <p>Agregala a tu pantalla de inicio</p>
+                        </div>
+                        <button
+                            onClick={handleInstall}
+                        >
+                            Instalar
+                        </button>
+                    </div>
+                )}
                 <div className='text-center mb-6'>
                     <h1 className='text-2xl font-semibold text-gray-900'>Armonia</h1>
                     <p className='text-sm text-gray-900'>
