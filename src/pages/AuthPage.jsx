@@ -35,7 +35,7 @@ export default function AuthPage() {
         if (isLogin) {
             const { error } = await supabase.auth.signInWithPassword({email, password})
             if (error) {
-                setError(error.message)
+                setError("Correo o contraseña incorrectos.")
             } else {
                 const pendingToken = localStorage.getItem('pendingInviteToken')
                 if (pendingToken) {
@@ -116,6 +116,17 @@ export default function AuthPage() {
                         {isLogin ? 'Registrate' : 'Inicia sesion'}
                     </button>
                 </p>
+
+                {isLogin && (
+                    <p className='text-center text-sm text-gray-500 mt-2'>
+                        <a 
+                            href="/reset-password"
+                            className='text-violet-600 font-medium hover:underline'
+                        >
+                            ¿Olvidaste tu contraseña?
+                        </a>
+                    </p>
+                )}
             </div>
         </div>
     )
