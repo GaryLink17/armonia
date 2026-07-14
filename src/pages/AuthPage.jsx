@@ -117,7 +117,7 @@ export default function AuthPage() {
                         />
                     </div>
                     <div>
-                        <label className='text-sm text-gray-600 mb-1 block'>Contraseño</label>
+                        <label className='text-sm text-gray-600 mb-1 block'>Contraseña</label>
                         <input type="password" 
                             value={password}
                             onChange={e => setPassword(e.target.value)}
