@@ -1,11 +1,11 @@
 import { NavLink, useNavigate } from "react-router-dom"
 import { supabase } from "../supabaseClient"
+import logo from "../assets/logo.svg"
 import {
   IconMusic,
   IconClock,
   IconUsers,
-  IconLogout,
-  IconMusicHeart
+  IconLogout
 } from '@tabler/icons-react'
 
 export default function Layout({ children }) {
@@ -28,7 +28,7 @@ export default function Layout({ children }) {
             {/* Sidebar — solo desktop */}
             <aside className="hidden md:flex flex-col w-52 bg-white border-r border-gray-200 fixed top-0 left-0 h-full z-10">
                 <div className="px-4 pt-5 pb-4 text-base font-semibold text-gray-900 flex items-center gap-2">
-                    <IconMusicHeart size={22} className="text-violet-600" />
+                    <img src={logo} alt="Armonia" className="w-8 h-8"  />
                     Armonia
                 </div>
 
