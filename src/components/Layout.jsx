@@ -87,7 +87,7 @@ export default function Layout({ children }) {
                 ))}
                 <button
                     onClick={handleLogout}
-                    className="flex flex-col items-center gap-0.5 px-4 py-1 text-sm text-gray-500"
+                    className="flex flex-col items-center gap-0.5 px-4 py-1 text-xs text-gray-500"
 
                 >
                     <IconLogout size={22}/>
