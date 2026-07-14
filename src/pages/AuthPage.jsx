@@ -91,6 +91,7 @@ export default function AuthPage() {
                         </div>
                         <button
                             onClick={handleInstall}
+                            className='bg-violet-600 text-white text-xs px-3 py-1.5 rounded-lg font-medium hover:bg-violet-700'
                         >
                             Instalar
                         </button>
