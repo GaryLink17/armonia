@@ -8,6 +8,7 @@ import {
   IconCheck,
   IconTrash,
   IconUserCircle,
+  IconLogout,
 } from "@tabler/icons-react";
 
 function generateToken() {
@@ -97,6 +98,11 @@ export default function GroupPanel({ group }) {
       setLoadingLink(false)
   }
 
+  async function handleLogout() {
+    await supabase.auth.signOut()
+    navegate('/')
+  }
+
   function handleCopy() {
     navigator.clipboard.writeText(inviteLink)
     setCopied(true)
@@ -179,6 +185,17 @@ export default function GroupPanel({ group }) {
           )}
         </div>
       )}
+
+      <div className="mt-8">
+        <p className="text-xs text-gray-400 uppercase tracking-wide mb-3">Cuenta</p>
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center justify-center gap-2 border border-gray-200 rounded-lg py-2 text-sm text-gray-600 hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-colors"
+        >
+          <IconLogout size={16} />
+          Cerrar Sesion
+        </button>
+      </div>
     </div>
   );
 }

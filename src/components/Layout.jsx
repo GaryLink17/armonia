@@ -85,14 +85,6 @@ export default function Layout({ children }) {
                         {label}
                     </NavLink>
                 ))}
-                <button
-                    onClick={handleLogout}
-                    className="flex flex-col items-center gap-0.5 px-4 py-1 text-xs text-gray-500"
-
-                >
-                    <IconLogout size={22}/>
-                    Salir
-                </button>
             </nav>
         </div>
     )
