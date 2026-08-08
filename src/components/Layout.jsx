@@ -5,7 +5,9 @@ import {
   IconMusic,
   IconClock,
   IconUsers,
-  IconLogout
+  IconLogout,
+  IconMusicHeart,
+  IconPlaylist
 } from '@tabler/icons-react'
 
 export default function Layout({ children }) {
@@ -18,6 +20,7 @@ export default function Layout({ children }) {
 
     const navItems = [
         { to: '/dashboard', label: 'Repertorio', icon: IconMusic, end: true },
+        { to: '/dashboard/setlists', label: 'Setlists', icon: IconPlaylist },
         { to: '/dashboard/pendientes', label: 'Pendientes', icon: IconClock },
         { to: '/dashboard/grupo', label: 'Grupo', icon: IconUsers }
     ]

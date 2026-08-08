@@ -5,6 +5,7 @@ import CreateGroup from '../components/CreateGroup'
 import GroupPanel from '../components/GroupPanel'
 import SongList from '../components/SongList'
 import PendingList from '../components/PendingList'
+import SetlistList from '../components/SetlistList'
 
 export default function Dashboard() {
   const [group, setGroup] = useState(undefined)
@@ -42,6 +43,7 @@ export default function Dashboard() {
       <Route path="/" element={<SongList group={group} />} />
       <Route path="/pendientes" element={<PendingList group={group} />} />
       <Route path="/grupo" element={<GroupPanel group={group} />} />
+      <Route path="/setlists" element={<SetlistList group={group} />} />
     </Routes>
   )
 }
