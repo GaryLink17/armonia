@@ -208,6 +208,7 @@ function SortableSongRow({ item, index, onRemove }) {
         {...attributes}
         {...listeners}
         className="text-gray-300 hover:text-gray-400 cursor-grab active:cursor-grabbing"
+        style={{ touchAction: 'none' }}
       >
         <IconGripVertical size={18} />
       </div>
