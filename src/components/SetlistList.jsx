@@ -76,8 +76,9 @@ export default function SetlistList({ group }) {
     );
   }
 
-  return (
-    <div className="w-full max-w-2xl mx-auto px-4 py-8">
+return (
+  <div className="flex flex-col h-full">
+    <div className="w-full max-w-2xl mx-auto px-4 pt-8 pb-4 flex-shrink-0">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-lg font-semibold text-gray-900">Setlists</h2>
@@ -93,7 +94,9 @@ export default function SetlistList({ group }) {
           Nuevo
         </button>
       </div>
+    </div>
 
+    <div className="flex-1 overflow-y-auto w-full max-w-2xl mx-auto px-4 pb-8">
       {setlists.length === 0 ? (
         <div className="text-center py-16 text-gray-400">
           <IconPlaylist size={40} className="mx-auto mb-3 opacity-30" />
@@ -143,21 +146,22 @@ export default function SetlistList({ group }) {
           ))}
         </div>
       )}
-
-      {showForm && (
-        <SetlistForm
-          group={group}
-          setlist={showForm === true ? null : showForm}
-          onClose={() => setShowForm(false)}
-          onSaved={() => {
-            fetchSetlists();
-            setShowForm(false);
-            setSelectedSetlist(null);
-          }}
-        />
-      )}
     </div>
-  );
+
+    {showForm && (
+      <SetlistForm
+        group={group}
+        setlist={showForm === true ? null : showForm}
+        onClose={() => setShowForm(false)}
+        onSaved={() => {
+          fetchSetlists();
+          setShowForm(false);
+          setSelectedSetlist(null);
+        }}
+      />
+    )}
+  </div>
+)
 }
 
 function SetlistForm({ group, setlist, onClose, onSaved }) {

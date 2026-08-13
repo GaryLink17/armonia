@@ -67,83 +67,86 @@ export default function PendingList({ group }) {
     if (loading) return <LoadingSpiner message="Cargando..." />
     if (error) return <ErrorMessage message={error} />
 
-    return (
-        <div className="w-full max-w-2xl mx-auto px-4 py-8">
-            <div className="flex items-center justify-between mb-6">
-                <div>
-                    <h2 className="text-lg font-semibold text-gray-900">Pendientes</h2>
-                    <p className="text-sm text-gray-500">{pending.length} sugerencia{pending.length !== 1 ? 's' : ''}</p>
-                </div>
-                <button
-                    onClick={() => setShowForm(true)}
-                    className="flex items-center gap-2 bg-violet-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-violet-700"
-
-                >
-                    <IconPlus size={16} />
-                    Sugerir
-                </button>
-            </div>
-
-            {pending.length === 0 ? (
-                <div className="text-center py-16 text-gray-400">
-                    <IconMusic size={40} className="mx-auto mb-3 opacity-30" />
-                    <p className="text-sm">No hay canciones pendientes.</p>
-                </div>
-            ) : (
-                <div className="flex flex-col gap-3">
-                    {pending.map(song => (
-                        <div key={song.id} className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3">
-                            <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
-                                <IconMusic size={20} className="text-amber-600" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-gray-900 truncate">{song.title}</p>
-                                <p className="text-xs text-gray-500 truncate">{song.artist}</p>
-                            </div>
-                            <div className="flex items-center gap-1 shrink-0">
-                                {song.youtube_url && (
-                                    <a
-                                        href={song.youtube_url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-500"
-                                    >
-                                        <IconBrandYoutube size={18} />
-                                    </a>
-                                )}
-                                {isAdmin && (
-                                    <>
-                                        <button
-                                            onClick={() => handleApprove(song)}
-                                            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-green-50 text-gray-400 hover:text-green-600"
-                                            title="Aprobar"
-                                        >
-                                            <IconCheck size={18} />
-                                        </button>
-                                        <button
-                                            onClick={() => handleDiscard(song.id)}
-                                            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500"
-                                            title="Descartar"
-                                        >
-                                            <IconX size={18} />
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            {showForm && (
-                <PendingForm 
-                    group={group}
-                    onClose={() => setShowForm(false)}
-                    onSaved={fetchPending}
-                />
-            )}
+   return (
+  <div className="flex flex-col h-full">
+    <div className="w-full max-w-2xl mx-auto px-4 pt-8 pb-4 flex-shrink-0">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-lg font-semibold text-gray-900">Pendientes</h2>
+          <p className="text-sm text-gray-500">{pending.length} sugerencia{pending.length !== 1 ? 's' : ''}</p>
         </div>
-    )
+        <button
+          onClick={() => setShowForm(true)}
+          className="flex items-center gap-2 bg-violet-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-violet-700"
+        >
+          <IconPlus size={16} />
+          Sugerir
+        </button>
+      </div>
+    </div>
+
+    <div className="flex-1 overflow-y-auto w-full max-w-2xl mx-auto px-4 pb-8">
+      {pending.length === 0 ? (
+        <div className="text-center py-16 text-gray-400">
+          <IconMusic size={40} className="mx-auto mb-3 opacity-30" />
+          <p className="text-sm">No hay canciones pendientes.</p>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {pending.map(song => (
+            <div key={song.id} className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3">
+              <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
+                <IconMusic size={20} className="text-amber-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">{song.title}</p>
+                <p className="text-xs text-gray-500 truncate">{song.artist}</p>
+              </div>
+              <div className="flex items-center gap-1 shrink-0">
+                {song.youtube_url && (
+                  <a
+                    href={song.youtube_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-500"
+                  >
+                    <IconBrandYoutube size={18} />
+                  </a>
+                )}
+                {isAdmin && (
+                  <>
+                    <button
+                      onClick={() => handleApprove(song)}
+                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-green-50 text-gray-400 hover:text-green-600"
+                      title="Aprobar"
+                    >
+                      <IconCheck size={18} />
+                    </button>
+                    <button
+                      onClick={() => handleDiscard(song.id)}
+                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500"
+                      title="Descartar"
+                    >
+                      <IconX size={18} />
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+
+    {showForm && (
+      <PendingForm
+        group={group}
+        onClose={() => setShowForm(false)}
+        onSaved={fetchPending}
+      />
+    )}
+  </div>
+)
 }
 
 function PendingForm({group, onClose, onSaved}) {

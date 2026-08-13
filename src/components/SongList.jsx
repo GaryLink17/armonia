@@ -60,102 +60,107 @@ export default function SongList({ group }) {
     )
 
     return (
-        <div className="w-full max-w-2xl mx-auto px-4 py-8">
-            <div className="flex items-center justify-between mb-6">
-                <div>
-                    <h2 className="text-lg font-semibold text-gray-900">Repertorio</h2>
-                    <p className="text-sm text-gray-500">{filteredSongs.length} cancion{filteredSongs.length !== 1 ? 'es' : ''}</p>
-                </div>
-                {isAdmin && (
-                    <button
-                        onClick={() => setShowForm(true)}
-                        className="flex items-center gap-2 bg-violet-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-violet-700"
-                    >
-                        <IconPlus size={16} />
-                        Agregar
-                    </button>
-                )}
-            </div>
-
-            <div className="relative mb-6">
-                <IconSearch size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input type="text" 
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    placeholder="Busca por nombre o artista"
-                    className="w-full border border-gray-200 rounded-lg pl-9 pr-4 py-2 text-sm outline-none focus:border-violet-500"
-                />
-            </div>
-
-            {filteredSongs.length === 0 ? (
-                <div className="text-center py-16 text-gray-400">
-                    <IconMusic size={40} className="mx-auto mb-3 opacity-30" />
-                    <p className="text-sm">No hay canciones en el repertorio.</p>
-                </div>
-            ) : (
-                <div className="flex flex-col gap-3">
-                    {filteredSongs.map(song => (
-                        <div
-                            key={song.id}
-                            onClick={() => setSelectedSong(song)}
-                            className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3 cursor-pointer hover:border-violet-200 hover:bg-violet-50 transition-colors"
-                        >
-                            <div className="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center flex-shrink-0">
-                                <IconMusic size={20} className="text-violet-600" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-gray-900 truncate">{song.title}</p>
-                                <p className="text-xs text-gray-500 truncate">{song.artist}</p>
-                            </div>
-                            <div className="hidden sm:flex items-center gap-2 flex-shrink-0">
-                                <span className="text-xs bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full">
-                                    {song.original_key} → {song.ministry_key}
-                                </span>
-                            </div>
-                            <div className="flex items-center gap-1 flex-shrink-0">
-                                {song.youtube_url && (
-                                    <a
-                                        href={song.youtube_url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        onClick={(e) => e.stopPropagation()}
-                                        className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-500"
-                                    >
-                                        <IconBrandYoutube size={18} />
-                                    </a>
-                                )}
-                                {isAdmin && (
-                                    <>
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); setShowForm(song) }}
-                                            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-violet-600"
-                                        >
-                                            <IconEdit size={18} />
-                                        </button>
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); handleDelete(song.id) }}
-                                            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-500"
-                                        >
-                                            <IconTrash size={18} />
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            {showForm && (
-                <SongForm
-                    group={group}
-                    song={showForm === true ? null : showForm}
-                    onClose={() => setShowForm(false)}
-                    onSaved={fetchSongs}
-                />
-            )}
+  <div className="flex flex-col h-full">
+    <div className="w-full max-w-2xl mx-auto px-4 pt-8 pb-4 flex-shrink-0">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-lg font-semibold text-gray-900">Repertorio</h2>
+          <p className="text-sm text-gray-500">{filteredSongs.length} cancion{filteredSongs.length !== 1 ? 'es' : ''}</p>
         </div>
-    )
+        {isAdmin && (
+          <button
+            onClick={() => setShowForm(true)}
+            className="flex items-center gap-2 bg-violet-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-violet-700"
+          >
+            <IconPlus size={16} />
+            Agregar
+          </button>
+        )}
+      </div>
+
+      <div className="relative">
+        <IconSearch size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+        <input
+          type="text"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Busca por nombre o artista"
+          className="w-full border border-gray-200 rounded-lg pl-9 pr-4 py-2 text-sm outline-none focus:border-violet-500"
+        />
+      </div>
+    </div>
+
+    <div className="flex-1 overflow-y-auto w-full max-w-2xl mx-auto px-4 pb-8">
+      {filteredSongs.length === 0 ? (
+        <div className="text-center py-16 text-gray-400">
+          <IconMusic size={40} className="mx-auto mb-3 opacity-30" />
+          <p className="text-sm">No hay canciones en el repertorio.</p>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {filteredSongs.map(song => (
+            <div
+              key={song.id}
+              onClick={() => setSelectedSong(song)}
+              className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3 cursor-pointer hover:border-violet-200 hover:bg-violet-50 transition-colors"
+            >
+              <div className="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center flex-shrink-0">
+                <IconMusic size={20} className="text-violet-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">{song.title}</p>
+                <p className="text-xs text-gray-500 truncate">{song.artist}</p>
+              </div>
+              <div className="hidden sm:flex items-center gap-2 flex-shrink-0">
+                <span className="text-xs bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full">
+                  {song.original_key} → {song.ministry_key}
+                </span>
+              </div>
+              <div className="flex items-center gap-1 flex-shrink-0">
+                {song.youtube_url && (
+                  <a
+                    href={song.youtube_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-500"
+                  >
+                    <IconBrandYoutube size={18} />
+                  </a>
+                )}
+                {isAdmin && (
+                  <>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setShowForm(song) }}
+                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-violet-600"
+                    >
+                      <IconEdit size={18} />
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDelete(song.id) }}
+                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-500"
+                    >
+                      <IconTrash size={18} />
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+
+    {showForm && (
+      <SongForm
+        group={group}
+        song={showForm === true ? null : showForm}
+        onClose={() => setShowForm(false)}
+        onSaved={fetchSongs}
+      />
+    )}
+  </div>
+)
 }
 
 function SongForm({ group, song, onClose, onSaved }) {
