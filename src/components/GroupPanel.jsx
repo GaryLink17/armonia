@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import LoadingSpinner from './LoadingSpinner'
-import ErrorMessage from './ErrorMessage' 
+import LoadingSpinner from "./LoadingSpinner";
+import ErrorMessage from "./ErrorMessage";
+import { useProfile } from "../hooks/useProfile";
 import {
   IconLink,
   IconCopy,
@@ -24,8 +25,12 @@ export default function GroupPanel({ group }) {
   const [loadingLink, setLoadingLink] = useState(false);
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null)
+  const [error, setError] = useState(null);
   const isAdmin = group.role === "admin";
+  const { profile, updateDisplayName } = useProfile();
+  const [editingName, setEditingName] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [savingName, setSavingName] = useState(false);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/immutability -- false positive: fetchMembers is a hoisted function declaration, same pattern as fetchSongs/fetchPending elsewhere
@@ -34,7 +39,7 @@ export default function GroupPanel({ group }) {
 
   async function fetchMembers() {
     setLoading(true);
-    setError(null)
+    setError(null);
 
     const { data: memberData, error: memberError } = await supabase
       .from("group_members")
@@ -42,75 +47,73 @@ export default function GroupPanel({ group }) {
       .eq("group_id", group.group_id);
 
     if (memberError || !memberData) {
-      setError('No se puedieron cargar los miembros.')
-      setLoading(false)
-      return;
-    }
-
-    const userIds = memberData.map((m) => m.user_id);
-    const { data: profileData, error: profileError } = await supabase
-      .from("user_profiles")
-      .select("id, email")
-      .in("id", userIds);
-
-    if (profileError) {
-      setError('No pudieron cargarse los perfiles de los miembros.')
+      setError("No se pudieron cargar los miembros.");
       setLoading(false);
       return;
     }
 
+    const userIds = memberData.map((m) => m.user_id);
+
+    const [{ data: profileData }, { data: displayData }] = await Promise.all([
+      supabase.from("user_profiles").select("id, email").in("id", userIds),
+      supabase.from("profiles").select("id, display_name").in("id", userIds),
+    ]);
+
     const enriched = memberData.map((m) => ({
       user_id: m.user_id,
       role: m.role,
-      email: profileData.find((p) => p.id === m.user_id)?.email || "Sin correo",
+      email:
+        profileData?.find((p) => p.id === m.user_id)?.email || "Sin correo",
+      display_name:
+        displayData?.find((p) => p.id === m.user_id)?.display_name || null,
     }));
 
-    setMembers(enriched)
-    setLoading(false)
+    setMembers(enriched);
+    setLoading(false);
   }
 
   async function handleRemoveMember(userId) {
-    const confirm = window.confirm("Seguro que deseas eliminar este miembro?")
-    if (!confirm) return
+    const confirm = window.confirm("Seguro que deseas eliminar este miembro?");
+    if (!confirm) return;
 
     const { error } = await supabase
-      .from('group_members')
+      .from("group_members")
       .delete()
-      .eq('group_id', group.group_id)
-      .eq('user_id', userId)
+      .eq("group_id", group.group_id)
+      .eq("user_id", userId);
 
-    if (!error) setMembers(members.filter(m => m.user_id !== userId))
+    if (!error) setMembers(members.filter((m) => m.user_id !== userId));
   }
 
   async function handleGenerateLink() {
-    setLoadingLink(true)
-    const token = generateToken()
+    setLoadingLink(true);
+    const token = generateToken();
 
     const { error } = await supabase
-      .from('invitations')
-      .insert({ group_id: group.group_id, token })
+      .from("invitations")
+      .insert({ group_id: group.group_id, token });
 
-      if (!error) {
-        const link = `${window.location.origin}/invite/${token}`
-        setInviteLink(link)
-      }
+    if (!error) {
+      const link = `${window.location.origin}/invite/${token}`;
+      setInviteLink(link);
+    }
 
-      setLoadingLink(false)
+    setLoadingLink(false);
   }
 
   async function handleLogout() {
-    await supabase.auth.signOut()
-    navegate('/')
+    await supabase.auth.signOut();
+    navegate("/");
   }
 
   function handleCopy() {
-    navigator.clipboard.writeText(inviteLink)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    navigator.clipboard.writeText(inviteLink);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   }
 
-  if (loading) return <LoadingSpinner message="Cargando..." />
-  if (error) return <ErrorMessage message={error} />
+  if (loading) return <LoadingSpinner message="Cargando..." />;
+  if (error) return <ErrorMessage message={error} />;
 
   return (
     <div className="w-full max-w-2xl mx-auto px-4 py-8">
@@ -125,7 +128,7 @@ export default function GroupPanel({ group }) {
 
       <div className="flex flex-col gap-2 mb-8">
         {members.map((m) => (
-          <div 
+          <div
             key={m.user_id}
             className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-xl"
           >
@@ -133,22 +136,26 @@ export default function GroupPanel({ group }) {
               <IconUserCircle size={20} className="text-violet-600" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-gray-800 truncate">{m.email}</p>
+              <p className="text-sm text-gray-800 truncate">
+                {m.display_name || m.email}
+              </p>
             </div>
-            <span className={`text-sm px-2 py-0.5 rounded-full ${
-              m.role === 'admin'
-                ? 'bg-violet-100 text-violet-700'
-                : 'bg-green-100 text-green-700'
-            }`}>
+            <span
+              className={`text-sm px-2 py-0.5 rounded-full ${
+                m.role === "admin"
+                  ? "bg-violet-100 text-violet-700"
+                  : "bg-green-100 text-green-700"
+              }`}
+            >
               {m.role === "admin" ? "Admin" : "Miembro"}
             </span>
             {isAdmin && m.role !== "admin" && (
-              <button 
-                onClick={() => handleRemoveMember(m.user_id)} 
+              <button
+                onClick={() => handleRemoveMember(m.user_id)}
                 className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500"
                 title="Eliminar miembro"
               >
-                <IconTrash size={16}  />
+                <IconTrash size={16} />
               </button>
             )}
           </div>
@@ -159,7 +166,9 @@ export default function GroupPanel({ group }) {
         <div className="border border-gray-300 rounded-xl p-4">
           <div className="flex items-center gap-2 mb-3">
             <IconLink size={16} className="text-violet-600" />
-            <p className="text-sm font-medium text-gray-700">Enlace de invitacion</p>
+            <p className="text-sm font-medium text-gray-700">
+              Enlace de invitacion
+            </p>
           </div>
           {inviteLink ? (
             <div className="flex flex-col gap-2">
@@ -171,7 +180,7 @@ export default function GroupPanel({ group }) {
                 className="flex items-center justify-center gap-2 bg-violet-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-violet-700"
               >
                 {copied ? <IconCheck size={16} /> : <IconCopy size={16} />}
-                {copied ? 'Copiado!' : 'Copiar enlace'}
+                {copied ? "Copiado!" : "Copiar enlace"}
               </button>
             </div>
           ) : (
@@ -180,20 +189,68 @@ export default function GroupPanel({ group }) {
               disabled={loadingLink}
               className="w-full bg-violet-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-violet-700 disabled:opacity-50"
             >
-              {loadingLink ? 'Generando...' : 'Generar enlace'}
+              {loadingLink ? "Generando..." : "Generar enlace"}
             </button>
           )}
         </div>
       )}
 
       <div className="mt-8">
-        <p className="text-xs text-gray-400 uppercase tracking-wide mb-3">Cuenta</p>
+        <p className="text-xs text-gray-400 uppercase tracking-wide mb-3">
+          Cuenta
+        </p>
+
+        {editingName ? (
+          <div className="flex flex-col gap-2 mb-3">
+            <input
+              type="text"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder="Tu nombre"
+              maxLength={50}
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-violet-500"
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={() => setEditingName(false)}
+                className="flex-1 border border-gray-200 rounded-lg py-2 text-sm text-gray-600 hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+              <button
+                disabled={savingName || !newName.trim()}
+                onClick={async () => {
+                  setSavingName(true);
+                  await updateDisplayName(newName.trim());
+                  setSavingName(false);
+                  setEditingName(false);
+                  fetchMembers();
+                }}
+                className="flex-1 bg-violet-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-violet-700 disabled:opacity-50"
+              >
+                {savingName ? "Guardando..." : "Guardar"}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            onClick={() => {
+              setNewName(profile?.display_name || "");
+              setEditingName(true);
+            }}
+            className="w-full flex items-center justify-center gap-2 border border-gray-200 rounded-lg py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors mb-2"
+          >
+            <IconUserCircle size={16} />
+            {profile?.display_name ? "Editar nombre" : "Agregar nombre"}
+          </button>
+        )}
+
         <button
           onClick={handleLogout}
           className="w-full flex items-center justify-center gap-2 border border-gray-200 rounded-lg py-2 text-sm text-gray-600 hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-colors"
         >
           <IconLogout size={16} />
-          Cerrar Sesion
+          Cerrar Sesión
         </button>
       </div>
     </div>
