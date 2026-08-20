@@ -11,8 +11,11 @@ import {
   IconTrash,
   IconUserCircle,
   IconLogout,
+  IconSun,
+  IconMoon,
 } from "@tabler/icons-react";
 import { useToast } from "../context/ToastContext";
+import { useTheme } from "../context/ThemeContext";
 
 
 function generateToken() {
@@ -36,6 +39,11 @@ export default function GroupPanel({ group }) {
   const [savingName, setSavingName] = useState(false);
   const {showToast} = useToast();
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
+
+  function toggleTheme() {
+    setTheme(theme === "dark" ? "light" : "dark");
+  }
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/immutability -- false positive: fetchMembers is a hoisted function declaration, same pattern as fetchSongs/fetchPending elsewhere
@@ -253,6 +261,14 @@ export default function GroupPanel({ group }) {
             {profile?.display_name ? "Editar nombre" : "Agregar nombre"}
           </button>
         )}
+
+        <button
+          onClick={toggleTheme}
+          className="md:hidden w-full flex items-center justify-center gap-2 border border-gray-200 dark:border-gray-700 rounded-lg py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors mb-2"
+        >
+          {theme === "dark" ? <IconSun size={16} /> : <IconMoon size={16} />}
+          {theme === "dark" ? "Modo claro" : "Modo oscuro"}
+        </button>
 
         <button
           onClick={handleLogout}

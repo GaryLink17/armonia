@@ -79,14 +79,6 @@ export default function Layout({ children }) {
         </div>
       </aside>
 
-      {/* Toggle de tema — solo mobile, flotante */}
-      <button
-        onClick={toggleTheme}
-        className="md:hidden fixed top-3 right-3 z-20 w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm text-gray-600 dark:text-gray-400"
-      >
-        {theme === "dark" ? <IconSun size={18} /> : <IconMoon size={18} />}
-      </button>
-
       {/* Contenido principal */}
       <div className="md:ml-52 h-screen pb-20 md:pb-0 overflow-x-hidden flex flex-col">
         <div className="flex-1 overflow-hidden">{children}</div>
