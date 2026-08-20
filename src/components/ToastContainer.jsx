@@ -3,15 +3,15 @@ import { IconCheck, IconX, IconInfoCircle } from '@tabler/icons-react'
 
 const styles = {
   success: {
-    container: 'bg-gray-900 text-white',
+    container: 'bg-gray-900 dark:bg-gray-800 dark:border dark:border-gray-700 text-white',
     icon: <IconCheck size={16} className="text-green-400 shrink-0" />,
   },
   error: {
-    container: 'bg-gray-900 text-white',
+    container: 'bg-gray-900 dark:bg-gray-800 dark:border dark:border-gray-700 text-white',
     icon: <IconX size={16} className="text-red-400 shrink-0" />,
   },
   info: {
-    container: 'bg-gray-900 text-white',
+    container: 'bg-gray-900 dark:bg-gray-800 dark:border dark:border-gray-700 text-white',
     icon: <IconInfoCircle size={16} className="text-blue-400 shrink-0" />,
   },
 }

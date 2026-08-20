@@ -80,12 +80,12 @@ export default function PendingList({ group }) {
     <div className="w-full max-w-2xl mx-auto px-4 pt-8 pb-4 flex-shrink-0">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Pendientes</h2>
-          <p className="text-sm text-gray-500">{pending.length} sugerencia{pending.length !== 1 ? 's' : ''}</p>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Pendientes</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{pending.length} sugerencia{pending.length !== 1 ? 's' : ''}</p>
         </div>
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 bg-violet-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-violet-700"
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm shadow-blue-600/25 dark:shadow-blue-500/10"
         >
           <IconPlus size={16} />
           Sugerir
@@ -95,20 +95,20 @@ export default function PendingList({ group }) {
 
     <div className="flex-1 overflow-y-auto w-full max-w-2xl mx-auto px-4 pb-8">
       {pending.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">
+        <div className="text-center py-16 text-gray-400 dark:text-gray-600">
           <IconMusic size={40} className="mx-auto mb-3 opacity-30" />
           <p className="text-sm">No hay canciones pendientes.</p>
         </div>
       ) : (
         <div className="flex flex-col gap-3">
           {pending.map(song => (
-            <div key={song.id} className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3">
-              <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
-                <IconMusic size={20} className="text-amber-600" />
+            <div key={song.id} className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm rounded-xl p-4 flex items-center gap-3">
+              <div className="w-10 h-10 bg-amber-100 dark:bg-amber-900/40 rounded-lg flex items-center justify-center shrink-0">
+                <IconMusic size={20} className="text-amber-600 dark:text-amber-400" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">{song.title}</p>
-                <p className="text-xs text-gray-500 truncate">{song.artist}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{song.title}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{song.artist}</p>
               </div>
               <div className="flex items-center gap-1 shrink-0">
                 {song.youtube_url && (
@@ -116,7 +116,7 @@ export default function PendingList({ group }) {
                     href={song.youtube_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-500"
+                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400"
                   >
                     <IconBrandYoutube size={18} />
                   </a>
@@ -125,14 +125,14 @@ export default function PendingList({ group }) {
                   <>
                     <button
                       onClick={() => handleApprove(song)}
-                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-green-50 text-gray-400 hover:text-green-600"
+                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-green-50 dark:hover:bg-green-950/40 text-gray-400 dark:text-gray-600 hover:text-green-600 dark:hover:text-green-400"
                       title="Aprobar"
                     >
                       <IconCheck size={18} />
                     </button>
                     <button
                       onClick={() => handleDiscard(song.id)}
-                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500"
+                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 dark:hover:bg-red-950/40 text-gray-400 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400"
                       title="Descartar"
                     >
                       <IconX size={18} />
@@ -151,6 +151,7 @@ export default function PendingList({ group }) {
         group={group}
         onClose={() => setShowForm(false)}
         onSaved={fetchPending}
+        onToast={showToast}
       />
     )}
   </div>
@@ -191,54 +192,54 @@ function PendingForm({group, onClose, onSaved, onToast}) {
     }
 
     return (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
-            <div className="bg-white rounded-2xl w-full max-w-md p-6">
-                <h3 className="text-base font-semibold text-gray-900 mb-4">Sugerir cancion</h3>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-md p-6">
+                <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-4">Sugerir cancion</h3>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <div>
-                        <label className="text-sm text-gray-600 mb-1 block">Nombre de la cancion</label>
-                        <input 
+                        <label className="text-sm text-gray-600 dark:text-gray-400 mb-1 block">Nombre de la cancion</label>
+                        <input
                             name="title"
                             value={form.title}
                             onChange={handleChange}
                             required
-                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-violet-500" 
+                            className="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 dark:focus:border-blue-400"
                         />
                     </div>
                     <div>
-                        <label className="text-sm text-gray-600 mb-1 block">Artista / Grupo</label>
-                        <input 
+                        <label className="text-sm text-gray-600 dark:text-gray-400 mb-1 block">Artista / Grupo</label>
+                        <input
                             name="artist"
                             value={form.artist}
                             onChange={handleChange}
-                            className="w-full border border-gray-200 px-3 py-2 rounded-lg text-sm outline-none focus:border-violet-500"
+                            className="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 px-3 py-2 rounded-lg text-sm outline-none focus:border-blue-500 dark:focus:border-blue-400"
                         />
                     </div>
                     <div>
-                        <label className="text-sm text-gray-600 mb-1 block">Link de Youtube</label>
+                        <label className="text-sm text-gray-600 dark:text-gray-400 mb-1 block">Link de Youtube</label>
                         <input
                             name="youtube_url"
                             value={form.youtube_url}
                             onChange={handleChange}
-                            className="border border-gray-200 w-full px-3 py-2 text-sm rounded-lg outline-none focus:border-violet-500"
+                            className="border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 w-full px-3 py-2 text-sm rounded-lg outline-none focus:border-blue-500 dark:focus:border-blue-400"
                         />
                     </div>
 
-                    {error && <p className="text-sm text-red-500">{error}</p>}
+                    {error && <p className="text-sm text-red-500 dark:text-red-400">{error}</p>}
 
                     <div className="flex gap-3 pt-3">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 border border-gray-200 text-sm py-2 rounded-lg text-gray-600 hover:bg-gray-50"
+                            className="flex-1 border border-gray-200 dark:border-gray-700 text-sm py-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
                         >
                             Cancelar
                         </button>
                         <button
                             type="submit"
                             disabled={loading}
-                            className="flex-1 bg-violet-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-violet-700 disabled:opacity-50"
+                            className="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700 shadow-sm shadow-blue-600/25 dark:shadow-blue-500/10 disabled:opacity-50"
                         >
                             {loading ? 'Guardando...' : 'Sugerir'}
                         </button>

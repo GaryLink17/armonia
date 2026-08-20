@@ -28,43 +28,43 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 w-full max-w-sm">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center px-4">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-8 w-full max-w-sm">
         <a
           href="/"
-          className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-6"
+          className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 mb-6"
         >
           <IconArrowLeft size={16} />
           Volver al login
         </a>
 
         <div className="text-center mb-6">
-          <h1 className="text-xl font-semibold text-gray-900">Restablecer contraseña</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Restablecer contraseña</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Ingresa tu correo y te enviaremos un enlace para crear una nueva contraseña.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
-            <label className="text-sm text-gray-600 mb-1 block">Correo</label>
+            <label className="text-sm text-gray-600 dark:text-gray-400 mb-1 block">Correo</label>
             <input
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-violet-500"
+              className="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 dark:focus:border-blue-400"
               placeholder="tu@correo.com"
             />
           </div>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-          {message && <p className="text-green-600 text-sm">{message}</p>}
+          {error && <p className="text-red-500 dark:text-red-400 text-sm">{error}</p>}
+          {message && <p className="text-green-600 dark:text-green-400 text-sm">{message}</p>}
 
           <button
             type="submit"
             disabled={loading}
-            className="bg-violet-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-violet-700 disabled:opacity-50"
+            className="bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700 shadow-sm shadow-blue-600/25 dark:shadow-blue-500/10 disabled:opacity-50"
           >
             {loading ? 'Enviando...' : 'Enviar enlace'}
           </button>

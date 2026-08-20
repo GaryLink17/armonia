@@ -86,14 +86,14 @@ return (
     <div className="w-full max-w-2xl mx-auto px-4 pt-8 pb-4 flex-shrink-0">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Setlists</h2>
-          <p className="text-sm text-gray-500">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Setlists</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             {setlists.length} setlist{setlists.length !== 1 ? "s" : ""}
           </p>
         </div>
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 bg-violet-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-violet-700"
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm shadow-blue-600/25 dark:shadow-blue-500/10"
         >
           <IconPlus size={16} />
           Nuevo
@@ -103,7 +103,7 @@ return (
 
     <div className="flex-1 overflow-y-auto w-full max-w-2xl mx-auto px-4 pb-8">
       {setlists.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">
+        <div className="text-center py-16 text-gray-400 dark:text-gray-600">
           <IconPlaylist size={40} className="mx-auto mb-3 opacity-30" />
           <p className="text-sm">No hay setlists creados aún.</p>
         </div>
@@ -113,23 +113,23 @@ return (
             <div
               key={setlist.id}
               onClick={() => setSelectedSetlist(setlist)}
-              className="bg-white border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-violet-200 hover:bg-violet-50 transition-colors"
+              className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md rounded-xl p-4 cursor-pointer hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center flex-shrink-0">
-                    <IconPlaylist size={20} className="text-violet-600" />
+                  <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center flex-shrink-0">
+                    <IconPlaylist size={20} className="text-blue-600 dark:text-blue-400" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                       {setlist.name}
                     </p>
                     <div className="flex items-center gap-3 mt-1">
-                      <span className="flex items-center gap-1 text-xs text-gray-500">
+                      <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                         <IconCalendar size={12} />
                         {formatDate(setlist.date)}
                       </span>
-                      <span className="flex items-center gap-1 text-xs text-gray-500">
+                      <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                         <IconMusic size={12} />
                         {setlist.setlist_songs[0].count} canción
                         {setlist.setlist_songs[0].count !== 1 ? "es" : ""}
@@ -142,7 +142,7 @@ return (
                     e.stopPropagation();
                     handleDelete(setlist.id);
                   }}
-                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 flex-shrink-0"
+                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 dark:hover:bg-red-950/40 text-gray-400 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400 flex-shrink-0"
                 >
                   <IconTrash size={16} />
                 </button>
@@ -209,50 +209,50 @@ function SetlistForm({ group, setlist, onClose, onSaved, onToast }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
-      <div className="bg-white rounded-2xl w-full max-w-md p-6">
-        <h3 className="text-base font-semibold text-gray-900 mb-4">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-md p-6">
+        <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-4">
           {setlist ? 'Editar setlist' : 'Nuevo setlist'}
         </h3>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
-            <label className="text-sm text-gray-600 mb-1 block">Nombre</label>
+            <label className="text-sm text-gray-600 dark:text-gray-400 mb-1 block">Nombre</label>
             <input
               name="name"
               value={form.name}
               onChange={handleChange}
               required
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-violet-500"
+              className="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 dark:focus:border-blue-400"
               placeholder="Ej. Canciones del domingo"
             />
           </div>
 
           <div>
-            <label className="text-sm text-gray-600 mb-1 block">Fecha <span className="text-gray-400">(Opcional)</span></label>
+            <label className="text-sm text-gray-600 dark:text-gray-400 mb-1 block">Fecha <span className="text-gray-400 dark:text-gray-600">(Opcional)</span></label>
             <input
               name="date"
               type="date"
               value={form.date}
               onChange={handleChange}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-violet-500"
+              className="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 dark:focus:border-blue-400"
             />
           </div>
 
-          {error && <p className="text-sm text-red-500">{error}</p>}
+          {error && <p className="text-sm text-red-500 dark:text-red-400">{error}</p>}
 
           <div className="flex gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 border border-gray-200 rounded-lg py-2 text-sm text-gray-600 hover:bg-gray-50"
+              className="flex-1 border border-gray-200 dark:border-gray-700 rounded-lg py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-violet-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-violet-700 disabled:opacity-50"
+              className="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700 shadow-sm shadow-blue-600/25 dark:shadow-blue-500/10 disabled:opacity-50"
             >
               {loading ? 'Guardando...' : setlist ? 'Guardar' : 'Crear'}
             </button>

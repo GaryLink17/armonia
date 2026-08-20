@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import LoadingSpinner from "./LoadingSpinner";
 import ErrorMessage from "./ErrorMessage";
@@ -34,6 +35,7 @@ export default function GroupPanel({ group }) {
   const [newName, setNewName] = useState("");
   const [savingName, setSavingName] = useState(false);
   const {showToast} = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/immutability -- false positive: fetchMembers is a hoisted function declaration, same pattern as fetchSongs/fetchPending elsewhere
@@ -109,7 +111,7 @@ export default function GroupPanel({ group }) {
 
   async function handleLogout() {
     await supabase.auth.signOut();
-    navegate("/");
+    navigate("/");
   }
 
   function handleCopy() {
@@ -124,10 +126,10 @@ export default function GroupPanel({ group }) {
   return (
     <div className="w-full max-w-2xl mx-auto px-4 py-8">
       <div className="mb-6">
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
           {group.groups.name}
         </h2>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           {members.length} miembro{members.length !== 1 ? "s" : ""}
         </p>
       </div>
@@ -136,21 +138,21 @@ export default function GroupPanel({ group }) {
         {members.map((m) => (
           <div
             key={m.user_id}
-            className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-xl"
+            className="flex items-center gap-3 p-3 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm rounded-xl"
           >
-            <div className="w-9 h-9 rounded-full bg-violet-100 flex items-center justify-center">
-              <IconUserCircle size={20} className="text-violet-600" />
+            <div className="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center">
+              <IconUserCircle size={20} className="text-blue-600 dark:text-blue-400" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-gray-800 truncate">
+              <p className="text-sm text-gray-800 dark:text-gray-200 truncate">
                 {m.display_name || m.email}
               </p>
             </div>
             <span
               className={`text-sm px-2 py-0.5 rounded-full ${
                 m.role === "admin"
-                  ? "bg-violet-100 text-violet-700"
-                  : "bg-green-100 text-green-700"
+                  ? "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400"
+                  : "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400"
               }`}
             >
               {m.role === "admin" ? "Admin" : "Miembro"}
@@ -158,7 +160,7 @@ export default function GroupPanel({ group }) {
             {isAdmin && m.role !== "admin" && (
               <button
                 onClick={() => handleRemoveMember(m.user_id)}
-                className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500"
+                className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 dark:hover:bg-red-950/40 text-gray-400 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400"
                 title="Eliminar miembro"
               >
                 <IconTrash size={16} />
@@ -169,21 +171,21 @@ export default function GroupPanel({ group }) {
       </div>
 
       {isAdmin && (
-        <div className="border border-gray-300 rounded-xl p-4">
+        <div className="border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-4">
           <div className="flex items-center gap-2 mb-3">
-            <IconLink size={16} className="text-violet-600" />
-            <p className="text-sm font-medium text-gray-700">
+            <IconLink size={16} className="text-blue-600 dark:text-blue-400" />
+            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Enlace de invitacion
             </p>
           </div>
           {inviteLink ? (
             <div className="flex flex-col gap-2">
-              <div className="bg-gray-50 rounded-lg px-3 py-2 text-sm ">
+              <div className="bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg px-3 py-2 text-sm ">
                 {inviteLink}
               </div>
               <button
                 onClick={handleCopy}
-                className="flex items-center justify-center gap-2 bg-violet-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-violet-700"
+                className="flex items-center justify-center gap-2 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700 shadow-sm shadow-blue-600/25 dark:shadow-blue-500/10"
               >
                 {copied ? <IconCheck size={16} /> : <IconCopy size={16} />}
                 {copied ? "Copiado!" : "Copiar enlace"}
@@ -193,7 +195,7 @@ export default function GroupPanel({ group }) {
             <button
               onClick={handleGenerateLink}
               disabled={loadingLink}
-              className="w-full bg-violet-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-violet-700 disabled:opacity-50"
+              className="w-full bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700 shadow-sm shadow-blue-600/25 dark:shadow-blue-500/10 disabled:opacity-50"
             >
               {loadingLink ? "Generando..." : "Generar enlace"}
             </button>
@@ -202,7 +204,7 @@ export default function GroupPanel({ group }) {
       )}
 
       <div className="mt-8">
-        <p className="text-xs text-gray-400 uppercase tracking-wide mb-3">
+        <p className="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-3">
           Cuenta
         </p>
 
@@ -214,12 +216,12 @@ export default function GroupPanel({ group }) {
               onChange={(e) => setNewName(e.target.value)}
               placeholder="Tu nombre"
               maxLength={50}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-violet-500"
+              className="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 dark:focus:border-blue-400"
             />
             <div className="flex gap-2">
               <button
                 onClick={() => setEditingName(false)}
-                className="flex-1 border border-gray-200 rounded-lg py-2 text-sm text-gray-600 hover:bg-gray-50"
+                className="flex-1 border border-gray-200 dark:border-gray-700 rounded-lg py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
               >
                 Cancelar
               </button>
@@ -233,7 +235,7 @@ export default function GroupPanel({ group }) {
                   fetchMembers();
                   showToast('Nombre actualizado')
                 }}
-                className="flex-1 bg-violet-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-violet-700 disabled:opacity-50"
+                className="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700 shadow-sm shadow-blue-600/25 dark:shadow-blue-500/10 disabled:opacity-50"
               >
                 {savingName ? "Guardando..." : "Guardar"}
               </button>
@@ -245,7 +247,7 @@ export default function GroupPanel({ group }) {
               setNewName(profile?.display_name || "");
               setEditingName(true);
             }}
-            className="w-full flex items-center justify-center gap-2 border border-gray-200 rounded-lg py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors mb-2"
+            className="w-full flex items-center justify-center gap-2 border border-gray-200 dark:border-gray-700 rounded-lg py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors mb-2"
           >
             <IconUserCircle size={16} />
             {profile?.display_name ? "Editar nombre" : "Agregar nombre"}
@@ -254,7 +256,7 @@ export default function GroupPanel({ group }) {
 
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 border border-gray-200 rounded-lg py-2 text-sm text-gray-600 hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-colors"
+          className="w-full flex items-center justify-center gap-2 border border-gray-200 dark:border-gray-700 rounded-lg py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-950/40 hover:text-red-500 dark:hover:text-red-400 hover:border-red-200 dark:hover:border-red-900 transition-colors"
         >
           <IconLogout size={16} />
           Cerrar Sesión

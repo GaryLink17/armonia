@@ -14,7 +14,7 @@ export default defineConfig({
         name: 'Armonia',
         short_name: 'Armonia',
         description: 'Gestión de repertorio para ministerios de alabanza',
-        theme_color: '#534AB7',
+        theme_color: '#2563EB',
         background_color: '#f9fafb',
         display: 'standalone',
         start_url: '/',

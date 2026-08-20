@@ -31,8 +31,8 @@ export default function Dashboard() {
   }, [])
 
   if (loading) return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <p className="text-gray-400 text-sm">Cargando...</p>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
+      <p className="text-gray-400 dark:text-gray-600 text-sm">Cargando...</p>
     </div>
   )
 

@@ -121,21 +121,21 @@ export default function SetlistDetail({ setlist, group, onBack, onEdit }) {
     <div className="w-full max-w-2xl mx-auto px-4 py-8">
       <button
         onClick={onBack}
-        className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-6"
+        className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 mb-6"
       >
         <IconArrowLeft size={16} />
         Volver a setlists
       </button>
 
-      <div className="bg-violet-600 rounded-2xl p-5 mb-6">
+      <div className="bg-blue-600 rounded-2xl p-5 mb-6 shadow-sm shadow-blue-600/25 dark:shadow-blue-500/10">
         <div className="flex items-start justify-between">
           <div>
             <h2 className="text-lg font-semibold text-white">{setlist.name}</h2>
-            <div className="flex items-center gap-1 mt-1 text-violet-200 text-xs">
+            <div className="flex items-center gap-1 mt-1 text-blue-200 text-xs">
               <IconCalendar size={12} />
               {formatDate(setlist.date)}
             </div>
-            <p className="text-violet-200 text-xs mt-1">
+            <p className="text-blue-200 text-xs mt-1">
               {songs.length} canción{songs.length !== 1 ? 'es' : ''}
             </p>
           </div>
@@ -149,7 +149,7 @@ export default function SetlistDetail({ setlist, group, onBack, onEdit }) {
       </div>
 
       {songs.length === 0 ? (
-        <div className="text-center py-12 text-gray-400">
+        <div className="text-center py-12 text-gray-400 dark:text-gray-600">
           <IconMusic size={36} className="mx-auto mb-3 opacity-30" />
           <p className="text-sm">No hay canciones en este setlist.</p>
         </div>
@@ -176,7 +176,7 @@ export default function SetlistDetail({ setlist, group, onBack, onEdit }) {
 
       <button
         onClick={() => setShowPicker(true)}
-        className="w-full flex items-center justify-center gap-2 border border-dashed border-gray-300 rounded-xl py-3 text-sm text-violet-600 hover:bg-violet-50 transition-colors"
+        className="w-full flex items-center justify-center gap-2 border border-dashed border-gray-300 dark:border-gray-700 rounded-xl py-3 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors"
       >
         <IconPlus size={16} />
         Agregar canción
@@ -209,29 +209,29 @@ function SortableSongRow({ item, index, onRemove }) {
     <div
       ref={setNodeRef}
       style={style}
-      className="bg-white border border-gray-200 rounded-xl p-3 flex items-center gap-3"
+      className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm rounded-xl p-3 flex items-center gap-3"
     >
       <div
         {...attributes}
         {...listeners}
-        className="text-gray-300 hover:text-gray-400 cursor-grab active:cursor-grabbing"
+        className="text-gray-300 dark:text-gray-600 hover:text-gray-400 dark:hover:text-gray-500 cursor-grab active:cursor-grabbing"
         style={{ touchAction: 'none' }}
       >
         <IconGripVertical size={18} />
       </div>
-      <div className="w-7 h-7 rounded-lg bg-violet-100 flex items-center justify-center flex-shrink-0 text-xs font-medium text-violet-600">
+      <div className="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center flex-shrink-0 text-xs font-medium text-blue-600 dark:text-blue-400">
         {index + 1}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-gray-900 truncate">{item.songs.title}</p>
-        <p className="text-xs text-gray-500 truncate">{item.songs.artist}</p>
+        <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{item.songs.title}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{item.songs.artist}</p>
       </div>
-      <span className="text-xs bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full flex-shrink-0 hidden sm:block">
+      <span className="text-xs bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded-full flex-shrink-0 hidden sm:block">
         {item.songs.original_key} → {item.songs.ministry_key}
       </span>
       <button
         onClick={() => onRemove(item.id)}
-        className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 flex-shrink-0"
+        className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-red-50 dark:hover:bg-red-950/40 text-gray-400 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400 flex-shrink-0"
       >
         <IconTrash size={15} />
       </button>
@@ -285,20 +285,20 @@ function SongPicker({ group, setlistId, existingSongIds, onClose, onAdded, onToa
   }
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50">
-      <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md max-h-[80vh] flex flex-col">
-        <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-          <h3 className="text-base font-semibold text-gray-900">Agregar canción</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-sm">Cerrar</button>
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center z-50">
+      <div className="bg-white dark:bg-gray-900 rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md max-h-[80vh] flex flex-col">
+        <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+          <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">Agregar canción</h3>
+          <button onClick={onClose} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-sm">Cerrar</button>
         </div>
 
-        <div className="px-4 py-3 border-b border-gray-100">
+        <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
           <input
             type="text"
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Buscar canción..."
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-violet-500"
+            className="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 dark:focus:border-blue-400"
             autoFocus
           />
         </div>
@@ -307,26 +307,26 @@ function SongPicker({ group, setlistId, existingSongIds, onClose, onAdded, onToa
           {loading ? (
             <LoadingSpinner message="Cargando canciones..." />
           ) : filtered.length === 0 ? (
-            <p className="text-center text-sm text-gray-400 py-8">No hay canciones disponibles.</p>
+            <p className="text-center text-sm text-gray-400 dark:text-gray-600 py-8">No hay canciones disponibles.</p>
           ) : (
             <div className="flex flex-col gap-2">
               {filtered.map(song => (
                 <div
                   key={song.id}
-                  className="flex items-center gap-3 p-3 border border-gray-200 rounded-xl hover:border-violet-200 hover:bg-violet-50 cursor-pointer transition-colors"
+                  className="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-800 rounded-xl hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50 dark:hover:bg-blue-950/30 cursor-pointer transition-colors"
                   onClick={() => handleAdd(song)}
                 >
-                  <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center flex-shrink-0">
-                    <IconMusic size={16} className="text-violet-600" />
+                  <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center flex-shrink-0">
+                    <IconMusic size={16} className="text-blue-600 dark:text-blue-400" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">{song.title}</p>
-                    <p className="text-xs text-gray-500 truncate">{song.artist}</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{song.title}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{song.artist}</p>
                   </div>
                   {adding === song.id ? (
-                    <div className="w-5 h-5 border-2 border-violet-300 border-t-violet-600 rounded-full animate-spin" />
+                    <div className="w-5 h-5 border-2 border-blue-200 dark:border-blue-900 border-t-blue-600 dark:border-t-blue-400 rounded-full animate-spin" />
                   ) : (
-                    <IconPlus size={16} className="text-violet-600 flex-shrink-0" />
+                    <IconPlus size={16} className="text-blue-600 dark:text-blue-400 flex-shrink-0" />
                   )}
                 </div>
               ))}
