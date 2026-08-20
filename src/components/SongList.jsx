@@ -4,6 +4,7 @@ import { IconPlus, IconMusic, IconBrandYoutube, IconEdit, IconTrash, IconSearch 
 import SongDetail from "./SongDetails"
 import LoadingSpinner from "./LoadingSpinner"
 import ErrorMessage from "./ErrorMessage"
+import { useToast } from "../context/ToastContext"
 
 export default function SongList({ group }) {
     const [songs, setSongs] = useState([])
@@ -17,6 +18,7 @@ export default function SongList({ group }) {
         (s.artist || '').toLowerCase().includes(search.toLowerCase())
     )
     const isAdmin = group.role === 'admin'
+    const { showToast } = useToast()
 
 
     useEffect(() => {
@@ -44,7 +46,10 @@ export default function SongList({ group }) {
 
     async function handleDelete(id) {
         const { error } = await supabase.from('songs').delete().eq('id', id)
-        if (!error) setSongs(songs.filter(s => s.id !== id))
+        if (!error) {
+          setSongs(songs.filter(s => s.id !== id))
+          showToast('Cancion eliminada')
+        }
     }
 
     if (loading) return <LoadingSpinner message="Cargando Canciones..." />
@@ -157,13 +162,14 @@ export default function SongList({ group }) {
         song={showForm === true ? null : showForm}
         onClose={() => setShowForm(false)}
         onSaved={fetchSongs}
+        onToast={showToast}
       />
     )}
   </div>
 )
 }
 
-function SongForm({ group, song, onClose, onSaved }) {
+function SongForm({ group, song, onClose, onSaved, onToast }) {
     const [form, setForm] = useState({
         title: song?.title || '',
         artist: song?.artist || '',
@@ -202,6 +208,7 @@ function SongForm({ group, song, onClose, onSaved }) {
         } else {
             onSaved()
             onClose()
+            onToast(song ? 'Cancion actualizada' : 'Cancion agregada')
         }
 
         setLoading(false)

@@ -4,6 +4,7 @@ import { IconPlus, IconPlaylist, IconTrash, IconCalendar, IconMusic } from '@tab
 import LoadingSpinner from './LoadingSpinner'
 import ErrorMessage from './ErrorMessage'
 import SetlistDetail from './SetlistDetail'
+import { useToast } from "../context/ToastContext";
 
 export default function SetlistList({ group }) {
   const [setlists, setSetlists] = useState([])
@@ -11,6 +12,7 @@ export default function SetlistList({ group }) {
   const [error, setError] = useState(null)
   const [showForm, setShowForm] = useState(false)
   const [selectedSetlist, setSelectedSetlist] = useState(null)
+  const {showToast} = useToast();
 
   useEffect(() => {
     fetchSetlists()
@@ -39,7 +41,10 @@ export default function SetlistList({ group }) {
     const confirm = window.confirm('¿Eliminar este setlist?')
     if (!confirm) return
     const { error } = await supabase.from('setlists').delete().eq('id', id)
-    if (!error) setSetlists(setlists.filter(s => s.id !== id))
+    if (!error) {
+      setSetlists(setlists.filter(s => s.id !== id))
+      showToast('Setlist eliminado')
+    }
   }
 
   function formatDate(dateStr) {
@@ -158,13 +163,14 @@ return (
           setShowForm(false);
           setSelectedSetlist(null);
         }}
+        onToast={showToast}
       />
     )}
   </div>
 )
 }
 
-function SetlistForm({ group, setlist, onClose, onSaved }) {
+function SetlistForm({ group, setlist, onClose, onSaved, onToast }) {
   const [form, setForm] = useState({
     name: setlist?.name || '',
     date: setlist?.date || '',
@@ -196,6 +202,7 @@ function SetlistForm({ group, setlist, onClose, onSaved }) {
     } else {
       onSaved()
       onClose()
+      onToast(setlist ? 'Setlist actualizado' : 'Setlist creado')
     }
 
     setLoading(false)

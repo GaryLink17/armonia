@@ -3,6 +3,7 @@ import { supabase } from '../supabaseClient';
 import { IconPlus, IconMusic, IconCheck, IconX, IconBrandYoutube } from "@tabler/icons-react";
 import LoadingSpiner from './LoadingSpinner';
 import ErrorMessage from './ErrorMessage'
+import { useToast } from "../context/ToastContext";
 
 export default function PendingList({ group }) {
     const [pending, setPending] = useState([])
@@ -10,6 +11,7 @@ export default function PendingList({ group }) {
     const [showForm, setShowForm] = useState(false)
     const [error, setError] = useState(null)
     const isAdmin = group.role === 'admin'
+    const {showToast} = useToast();
 
     useEffect(() => {
         fetchPending()
@@ -56,12 +58,18 @@ export default function PendingList({ group }) {
                 .delete()
                 .eq('id', song.id)
             
-            if (!deleteError) setPending(pending.filter(p => p.id !== song.id))
+            if (!deleteError) {
+              setPending(pending.filter(p => p.id !== song.id))
+              showToast('Cancion aprobada')
+            }
     }
 
     async function handleDiscard(id) {
         const { error } = await supabase.from('pending_songs').delete().eq('id', id)
-        if (!error) setPending(pending.filter(p => p.id !== id))
+        if (!error) {
+          setPending(pending.filter(p => p.id !== id))
+          showToast('Cancion descartada')
+        }
     }
 
     if (loading) return <LoadingSpiner message="Cargando..." />
@@ -149,7 +157,7 @@ export default function PendingList({ group }) {
 )
 }
 
-function PendingForm({group, onClose, onSaved}) {
+function PendingForm({group, onClose, onSaved, onToast}) {
     const [form, setForm] = useState({title:'', artist:'', youtube_url:''})
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
@@ -176,6 +184,7 @@ function PendingForm({group, onClose, onSaved}) {
         } else {
             onSaved()
             onClose()
+            onToast('Cancion sugerida')
         }
 
         setLoading(false)

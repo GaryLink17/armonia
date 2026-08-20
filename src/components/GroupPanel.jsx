@@ -11,6 +11,8 @@ import {
   IconUserCircle,
   IconLogout,
 } from "@tabler/icons-react";
+import { useToast } from "../context/ToastContext";
+
 
 function generateToken() {
   return (
@@ -31,6 +33,7 @@ export default function GroupPanel({ group }) {
   const [editingName, setEditingName] = useState(false);
   const [newName, setNewName] = useState("");
   const [savingName, setSavingName] = useState(false);
+  const {showToast} = useToast();
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/immutability -- false positive: fetchMembers is a hoisted function declaration, same pattern as fetchSongs/fetchPending elsewhere
@@ -82,7 +85,10 @@ export default function GroupPanel({ group }) {
       .eq("group_id", group.group_id)
       .eq("user_id", userId);
 
-    if (!error) setMembers(members.filter((m) => m.user_id !== userId));
+    if (!error) {
+      setMembers(members.filter((m) => m.user_id !== userId));
+      showToast('Miembro eliminado')
+    }
   }
 
   async function handleGenerateLink() {
@@ -225,6 +231,7 @@ export default function GroupPanel({ group }) {
                   setSavingName(false);
                   setEditingName(false);
                   fetchMembers();
+                  showToast('Nombre actualizado')
                 }}
                 className="flex-1 bg-violet-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-violet-700 disabled:opacity-50"
               >

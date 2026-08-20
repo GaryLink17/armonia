@@ -28,12 +28,15 @@ import {
 } from '@tabler/icons-react'
 import LoadingSpinner from './LoadingSpinner'
 import ErrorMessage from './ErrorMessage'
+import { useToast } from "../context/ToastContext";
+
 
 export default function SetlistDetail({ setlist, group, onBack, onEdit }) {
   const [songs, setSongs] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [showPicker, setShowPicker] = useState(false)
+  const {showToast} = useToast();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -81,7 +84,10 @@ export default function SetlistDetail({ setlist, group, onBack, onEdit }) {
       .delete()
       .eq('id', setlistSongId)
 
-    if (!error) setSongs(songs.filter(s => s.id !== setlistSongId))
+    if (!error) {
+      setSongs(songs.filter(s => s.id !== setlistSongId))
+      showToast('Cancion eliminada del setlist')
+    }
   }
 
   async function handleDragEnd(event) {
@@ -183,6 +189,7 @@ export default function SetlistDetail({ setlist, group, onBack, onEdit }) {
           existingSongIds={songs.map(s => s.songs.id)}
           onClose={() => setShowPicker(false)}
           onAdded={fetchSongs}
+          onToast={showToast}
         />
       )}
     </div>
@@ -232,7 +239,7 @@ function SortableSongRow({ item, index, onRemove }) {
   )
 }
 
-function SongPicker({ group, setlistId, existingSongIds, onClose, onAdded }) {
+function SongPicker({ group, setlistId, existingSongIds, onClose, onAdded, onToast }) {
   const [songs, setSongs] = useState([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
@@ -269,6 +276,7 @@ function SongPicker({ group, setlistId, existingSongIds, onClose, onAdded }) {
     })
 
     if (!error) {
+      onToast('Cancion agregada al setlist')
       onAdded()
       onClose()
     }
